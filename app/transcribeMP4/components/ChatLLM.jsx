@@ -79,7 +79,7 @@ export default function ChatLLM({ empresa }) {
   return (
     <div className="w-screen h-screen flex items-center justify-center bg-white">
       <div className="w-[90vw] h-[85vh] bg-gray-100 rounded-xl shadow-xl overflow-hidden flex flex-col lg:flex-row border mt-[70px] border-gray-200">
-        <ModalInicio onComplete={(info) => setEmpresaInfo(info)} />
+      
         <div className="hidden lg:block lg:w-[30%] h-full bg-white border-r border-gray-200 overflow-y-auto p-4">
           {/* Componente Perfil */}
           <Perfil user={user} empresaInfo={empresaInfo} />

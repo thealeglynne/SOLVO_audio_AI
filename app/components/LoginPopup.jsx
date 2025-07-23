@@ -15,7 +15,7 @@ export function LoginPopup({ visible, onClose }) {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/GLY_SALES_AGENTS`,
+        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/transcribeMP4`,
       },
     });
 
@@ -42,7 +42,7 @@ export function LoginPopup({ visible, onClose }) {
           await supabase.from('GLNNEacces').insert([{ email: user.email }]);
         }
 
-        router.push('/GLY_SALES_AGENTS');
+        router.push('/transcribeMP4');
       }
     };
 
