@@ -1,0 +1,13 @@
+@keyframes waveSlide {
+    from {
+      background-position: 0% 0%;
+    }
+    to {
+      background-position: 100% 0%;
+    }
+  }
+  
+  .animate-waves {
+    animation: waveSlide 1.5s linear infinite;
+  }
+  
