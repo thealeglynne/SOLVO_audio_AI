@@ -1,169 +1,127 @@
 'use client';
 
-import { useState, useRef } from 'react';
-import { X, Upload } from 'lucide-react';
+import React, { useState } from 'react';
+import axios from 'axios';
 
-export default function AudioTranscriber() {
+const AudioUploader = () => {
   const [file, setFile] = useState(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [transcription, setTranscription] = useState('');
-  const [summary, setSummary] = useState('');
   const [error, setError] = useState('');
-  const fileInputRef = useRef(null);
-  const API_URL = 'https://gly-ai-brain.onrender.com/transcribe';
-
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
-
-  const handleDragLeave = () => {
-    setIsDragging(false);
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const droppedFile = e.dataTransfer.files[0];
-    if (droppedFile && droppedFile.type === 'audio/mpeg') {
-      setFile(droppedFile);
-      setError('');
-    } else {
-      setError('Por favor, carga un archivo MP3 válido.');
-    }
-  };
 
   const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    if (selectedFile && selectedFile.type === 'audio/mpeg') {
-      setFile(selectedFile);
+    const selected = e.target.files[0];
+
+    if (selected && selected.type.startsWith('audio/')) {
+      setFile(selected);
       setError('');
     } else {
-      setError('Por favor, selecciona un archivo MP3 válido.');
+      setFile(null);
+      setError('Selecciona un archivo de audio válido (.mp3, .wav, .m4a, .ogg, etc).');
     }
   };
 
-  const handleClearFile = () => {
-    setFile(null);
-    setTranscription('');
-    setSummary('');
-    setError('');
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const handleUpload = async () => {
     if (!file) {
-      setError('Por favor, selecciona un archivo MP3.');
+      setError('Por favor, selecciona un archivo antes de continuar.');
       return;
     }
 
-    setIsLoading(true);
+    setIsUploading(true);
+    setTranscription('');
     setError('');
 
+    const formData = new FormData();
+
+    const extension = file.name.split('.').pop();
+    const safeFilename = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${extension}`;
+    const renamedFile = new File([file], safeFilename, { type: file.type });
+
+    formData.append('file', renamedFile);
+
     try {
-      const formData = new FormData();
-      formData.append('file', file);
+      const res = await axios.post(
+        'https://solvo-audio-ai-back.onrender.com/transcribir-audio/',
+        formData,
+        {
+          headers: { 'Content-Type': 'multipart/form-data' },
+          timeout: 120000,
+        }
+      );
 
-      const response = await fetch(API_URL, {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error(`Error HTTP! estado: ${response.status}`);
+      if (res.data?.transcripcion) {
+        setTranscription(res.data.transcripcion);
+      } else {
+        setError('La transcripción no se recibió correctamente.');
       }
-
-      const data = await response.json();
-      setTranscription(data.transcription || 'No se recibió transcripción');
-      setSummary(data.summary || 'No se recibió resumen');
     } catch (err) {
-      setError(`Error al transcribir: ${err.message}`);
+      console.error('Error de transcripción:', err);
+      if (err.response) {
+        setError(err.response.data.detail || 'Error del servidor.');
+      } else if (err.request) {
+        setError('El servidor no respondió. Espera unos segundos y vuelve a intentar.');
+      } else {
+        setError(`Error desconocido: ${err.message}`);
+      }
     } finally {
-      setIsLoading(false);
+      setIsUploading(false);
     }
   };
 
   return (
-    <div className="w-[90vw] max-w-4xl mx-auto p-6 -mt-5  bg-white/20 backdrop-blur-md shadow-xl border border-white/30 rounded-xl">
-      <div className="grid grid-cols-1 gap-6">
+    <div className="max-w-xl mx-auto p-6 bg-white rounded-xl shadow-md space-y-4">
+      <h2 className="text-xl font-bold text-gray-800 text-center">Transcribir Audio</h2>
 
-        {/* Zona de drag-and-drop CON blur */}
-        <div
-          className={`p-8 border-2 border-dashed rounded-lg text-center transition-all 
-            ${isDragging ? 'border-blue-400 bg-white/30' : 'border-white/30 bg-white/20'} 
-            backdrop-blur-lg`}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
+      <form onSubmit={handleSubmit}>
+        <label
+          htmlFor="audioFile"
+          className={`block w-full px-4 py-3 text-center border-2 border-dashed rounded-lg cursor-pointer transition ${
+            file ? 'border-green-500 bg-green-50' : 'border-gray-300 hover:border-gray-400'
+          }`}
         >
-          <Upload className="mx-auto h-12 w-12 text-gray-200" />
-          <p className="mt-2 text-sm text-white">
-            {file ? file.name : 'Arrastra y suelta un archivo MP3 aquí'}
-          </p>
-          {file && (
-            <button
-              onClick={handleClearFile}
-              className="mt-2 text-white hover:text-red-400 flex items-center justify-center mx-auto"
-            >
-              <X size={16} className="mr-1" /> Limpiar
-            </button>
-          )}
           <input
             type="file"
-            accept="audio/mpeg"
+            id="audioFile"
+            accept=".mp3,.wav,.m4a,.ogg,.flac,audio/*"
             onChange={handleFileChange}
-            ref={fileInputRef}
             className="hidden"
-            id="file-input"
           />
-          <label
-            htmlFor="file-input"
-            className="relative mt-4 inline-block px-6 py-3 text-sm font-semibold text-white bg-[#001FCC]/80 overflow-hidden group rounded-lg shadow-lg cursor-pointer backdrop-blur"
-          >
-            <span className="absolute inset-0 z-0 bg-[linear-gradient(to-right,white_5%,#001FCC_5%,#001FCC_10%,white_10%)] bg-[length:40px_100%] opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-waves" />
-            <span className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out" />
-            <span className="relative z-10">Seleccionar archivo</span>
-          </label>
+          {file ? (
+            <span className="text-green-700 font-medium">{file.name}</span>
+          ) : (
+            <span className="text-gray-600">
+              Haz clic o arrastra un archivo de audio aquí (mp3, wav, m4a, ogg, flac...)
+            </span>
+          )}
+        </label>
 
-          {error && <p className="mt-2 text-sm text-red-300">{error}</p>}
-        </div>
+        {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
 
-        {/* Botón para enviar CON blur */}
-        <div className="text-center backdrop-blur-sm bg-white/20 p-4 rounded-lg">
-          <button
-            onClick={handleUpload}
-            disabled={isLoading || !file}
-            className={`px-6 py-2 rounded-lg text-white ${
-              isLoading || !file
-                ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-blue-600 hover:bg-blue-700'
-            }`}
-          >
-            {isLoading ? 'Procesando...' : 'Transcribir'}
-          </button>
-        </div>
+        <button
+          type="submit"
+          disabled={isUploading || !file}
+          className={`mt-4 w-full py-3 px-4 rounded-lg font-semibold text-white transition ${
+            isUploading || !file
+              ? 'bg-gray-400 cursor-not-allowed'
+              : 'bg-blue-600 hover:bg-blue-700'
+          }`}
+        >
+          {isUploading ? 'Transcribiendo...' : 'Transcribir'}
+        </button>
+      </form>
 
-        {/* Ventanas de resultados CON blur */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="p-4 backdrop-blur-lg bg-white/20 border border-white/30 shadow-sm rounded-lg">
-            <h3 className="text-lg font-semibold text-white mb-2">Transcripción</h3>
-            <div className="text-sm text-white/90 whitespace-pre-wrap leading-relaxed min-h-[150px] max-h-[300px] overflow-y-auto">
-              {transcription || 'La transcripción aparecerá aquí...'}
-            </div>
-          </div>
-
-          <div className="p-4 backdrop-blur-lg bg-white/20 border border-white/30 shadow-sm rounded-lg">
-            <h3 className="text-lg font-semibold text-white mb-2">Resumen</h3>
-            <div className="text-sm text-white/90 whitespace-pre-wrap leading-relaxed min-h-[150px] max-h-[300px] overflow-y-auto">
-              {summary || 'El resumen aparecerá aquí...'}
-            </div>
+      {transcription && (
+        <div className="mt-6">
+          <h3 className="text-lg font-semibold text-gray-700 mb-2">Resultado:</h3>
+          <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 whitespace-pre-wrap text-gray-800">
+            {transcription}
           </div>
         </div>
-
-      </div>
+      )}
     </div>
   );
-}
+};
+
+export default AudioUploader;

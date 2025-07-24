@@ -78,7 +78,7 @@ export default function ChatLLM({ empresa }) {
 
   return (
     <div className="w-screen h-screen flex items-center justify-center bg-white">
-      <div className="w-[90vw] h-[85vh] bg-gray-100 rounded-xl shadow-xl overflow-hidden flex flex-col lg:flex-row border mt-[70px] border-gray-200">
+      <div className="w-[90vw] h-[85vh] bg-gray-100 rounded-xl shadow-xl flex flex-col lg:flex-row border mt-[70px] border-gray-200">
       
         <div className="hidden lg:block lg:w-[30%] h-full bg-white border-r border-gray-200 overflow-y-auto p-4">
           {/* Componente Perfil */}
@@ -91,7 +91,7 @@ export default function ChatLLM({ empresa }) {
         {/* Área principal (vacía tras eliminar el chat y los modales) */}
         <div
   className="flex flex-col flex-1 px-3 sm:px-6 py-3 sm:py-5 h-full bg-cover bg-center bg-no-repeat"
-  style={{ backgroundImage: "url('https://i.pinimg.com/originals/cd/35/b5/cd35b59a48beff51fadb3489d4ec7eb3.gif')" }}
+  style={{ backgroundImage: "url('https://i.pinimg.com/originals/23/2b/c8/232bc816e6901e5ec4b88cf3128e1916.gif')" }}
 >
   <div className="flex-1 flex items-center justify-center bg-transparent rounded-xl shadow-xl p-4">
     <SeccionAudio />
