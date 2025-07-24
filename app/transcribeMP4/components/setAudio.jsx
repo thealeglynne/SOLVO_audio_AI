@@ -47,7 +47,7 @@ const AudioUploader = () => {
         formData,
         {
           headers: { 'Content-Type': 'multipart/form-data' },
-          timeout: 120000,
+          timeout: 12000000,
         }
       );
 
