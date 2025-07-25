@@ -45,22 +45,23 @@ export default function PerfilUsuario() {
 
   return (
     <div className="w-full max-w-xs mx-auto bg-white shadow-md rounded-2xl p-6 text-center border border-gray-100">
-      <img
-        src={userInfo.avatarUrl}
-        alt="Avatar"
-        className="w-24 h-24 mx-auto rounded-full object-cover shadow-sm border"
-      />
-      <h2 className="mt-4 text-xl font-semibold text-gray-800">{userInfo.nombre}</h2>
-      <p className="text-sm text-gray-500">{userInfo.correo}</p>
-      
-      <div className="mt-4 px-4 py-2 rounded-lg bg-gray-50 border border-gray-200">
-        <p className="text-gray-600 text-sm">
-          ¡Bienvenido a <span className="font-bold text-black">GLY_SALES_AGENTS</span>!
-        </p>
-        <p className="text-xs text-gray-400 mt-1">
-          Tu espacio para automatizar, escalar y cerrar más ventas.
-        </p>
-      </div>
-    </div>
+  <img
+    src={userInfo.avatarUrl}
+    alt="Avatar"
+    className="w-24 h-24 mx-auto rounded-full object-cover shadow-sm border"
+  />
+  <h2 className="mt-4 text-xl font-semibold text-gray-800">{userInfo.nombre}</h2>
+  <p className="text-sm text-gray-500">{userInfo.correo}</p>
+
+  <div className="mt-4 px-4 py-2 rounded-lg bg-gray-50 border border-gray-200">
+    <p className="text-gray-600 text-sm">
+      Estás en <span className="font-bold text-black">GLY English AGENTS</span>
+    </p>
+    <p className="text-xs text-gray-400 mt-1">
+      Módulo activo: Automatización de aanalisis de idiomaa.
+    </p>
+  </div>
+</div>
+
   );
 }

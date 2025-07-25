@@ -19,6 +19,7 @@ export default function GrabadorAudio() {
   const [isRecording, setIsRecording] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [transcription, setTranscription] = useState('');
+  const [analisis, setAnalisis] = useState('');
   const [error, setError] = useState('');
   const audioChunksRef = useRef([]);
   const [stream, setStream] = useState(null);
@@ -55,13 +56,9 @@ export default function GrabadorAudio() {
   };
 
   const stopRecording = () => {
-    if (mediaRecorder) {
-      mediaRecorder.stop();
-      setIsRecording(false);
-    }
-    if (stream) {
-      stream.getTracks().forEach((track) => track.stop());
-    }
+    if (mediaRecorder) mediaRecorder.stop();
+    if (stream) stream.getTracks().forEach((track) => track.stop());
+    setIsRecording(false);
   };
 
   const startVisualizer = (stream) => {
@@ -70,29 +67,22 @@ export default function GrabadorAudio() {
     const source = audioContext.createMediaStreamSource(stream);
     analyser.fftSize = 64;
     source.connect(analyser);
-
     analyserRef.current = analyser;
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
-
     const bufferLength = analyser.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
 
     const draw = () => {
       animationIdRef.current = requestAnimationFrame(draw);
-
       analyser.getByteFrequencyData(dataArray);
-
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const barWidth = (canvas.width / bufferLength) * 1.5;
       let x = 0;
-
       for (let i = 0; i < bufferLength; i++) {
         const barHeight = dataArray[i];
-        const color = '#000';
-
-        ctx.fillStyle = color;
+        ctx.fillStyle = '#000';
         ctx.fillRect(x, canvas.height - barHeight / 2, barWidth, barHeight / 2);
         x += barWidth + 1;
       }
@@ -118,6 +108,7 @@ export default function GrabadorAudio() {
 
     setIsUploading(true);
     setTranscription('');
+    setAnalisis('');
     setError('');
 
     const file = new File([audioBlob], `grabacion_${Date.now()}.webm`, { type: 'audio/webm' });
@@ -125,19 +116,18 @@ export default function GrabadorAudio() {
     formData.append('file', file);
 
     try {
-      const res = await axios.post(
-        'https://solvo-audio-ai-back.onrender.com/transcribir-audio/',
-        formData,
-        {
-          headers: { 'Content-Type': 'multipart/form-data' },
-          timeout: 120000,
-        }
-      );
+      const res = await axios.post('https://solvo-analista-english.onrender.com/transcribir-audio/', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        timeout: 120000,
+      });
 
-      if (res.data?.transcripcion) {
-        setTranscription(res.data.transcripcion);
+      const { transcripcion, analisis, error } = res.data;
+
+      if (error) {
+        setError(error);
       } else {
-        setError('Transcripción fallida.');
+        setTranscription(transcripcion || '');
+        setAnalisis(analisis || '');
       }
     } catch (err) {
       console.error(err);
@@ -147,18 +137,9 @@ export default function GrabadorAudio() {
     }
   };
 
-  const calidadData = [
-    { tiempo: '< 10s', calidad: 2 },
-    { tiempo: '10-30s', calidad: 8 },
-    { tiempo: '30-60s', calidad: 9 },
-    { tiempo: '60-90s', calidad: 7 },
-    { tiempo: '90-120s', calidad: 5 },
-    { tiempo: '> 120s', calidad: 3 },
-  ];
-
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[minmax(150px,auto)]">
-      {/* Grabar Audio */}
+      {/* Grabador */}
       <div className="md:col-span-1 bg-white/30 backdrop-blur-md p-6 rounded-2xl border border-white shadow-md flex flex-col items-center justify-between space-y-6">
         <h1 className="text-xl font-bold text-[#0f172a] tracking-tight">GLY_transcribe AI</h1>
         <img src="/glynne.png" alt="Logo Solvo AI" className="h-21 w-auto" />
@@ -189,12 +170,18 @@ export default function GrabadorAudio() {
             <button
               onClick={handleUpload}
               disabled={isUploading}
-              className={`flex items-center gap-2 bg-black hover:bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium transition ${
-                isUploading ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
+              className={`flex items-center justify-center ${
+                isUploading ? 'w-10 h-10 rounded-full bg-black' : 'gap-2 bg-black hover:bg-gray-900 px-4 py-2 rounded-lg'
+              } text-white text-sm font-medium transition-all duration-300`}
             >
-              <UploadCloud className="w-4 h-4" />
-              {isUploading ? 'Transcribiendo...' : 'Enviar Grabación'}
+              {isUploading ? (
+                <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+              ) : (
+                <>
+                  <UploadCloud className="w-4 h-4" />
+                  Enviar Grabación
+                </>
+              )}
             </button>
           )}
 
@@ -202,9 +189,8 @@ export default function GrabadorAudio() {
         </div>
       </div>
 
-      {/* Transcripción + Contenido */}
+      {/* Transcripción + Análisis */}
       <div className="md:col-span-2 flex flex-col gap-6">
-        {/* Transcripción */}
         <div className="bg-neutral-50 border border-neutral-300 shadow-md p-6 rounded-2xl">
           <h2 className="text-lg font-semibold text-neutral-800 mb-4">Texto Transcrito</h2>
           <div className="flex-1 overflow-y-auto p-3 bg-neutral-100 rounded-xl text-sm text-neutral-800 whitespace-pre-wrap scroll-smooth max-h-[40vh] shadow-inner">
@@ -212,34 +198,20 @@ export default function GrabadorAudio() {
           </div>
         </div>
 
-        {/* Contenido */}
         <div className="bg-neutral-50 border border-neutral-300 shadow-md p-6 rounded-2xl">
-          <h2 className="text-lg font-semibold text-neutral-800 mb-4">Contenido</h2>
-          <div className="flex-1 p-3 bg-neutral-100 rounded-xl text-sm text-neutral-800 shadow-inner max-h-[40vh]">
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={calidadData}>
-                <XAxis dataKey="tiempo" stroke="#111" />
-                <YAxis stroke="#111" />
-                <Tooltip />
-                <Bar dataKey="calidad">
-                  {calidadData.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={
-                        entry.calidad >= 8
-                          ? '#000000'
-                          : entry.calidad >= 6
-                          ? '#4b5563'
-                          : '#d1d5db'
-                      }
-                    />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-            <p className="text-gray-600 mt-4 text-xs leading-snug">
-              La calidad de la transcripción depende del tiempo: audios muy cortos pueden carecer de contexto, mientras que los intermedios (30-60s) ofrecen un equilibrio ideal. Audios muy largos pierden efectividad por ruido y redundancia.
-            </p>
+          <h2 className="text-lg font-semibold text-neutral-800 mb-4">Análisis del Contenido</h2>
+          <div className="flex-1 overflow-y-auto p-3 bg-neutral-100 rounded-xl text-sm text-neutral-800 whitespace-pre-wrap scroll-smooth max-h-[40vh] shadow-inner">
+            {analisis ? (
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: analisis
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\n/g, '<br />'),
+                }}
+              />
+            ) : (
+              'Aquí aparecerá el análisis del contenido una vez se procese.'
+            )}
           </div>
         </div>
       </div>

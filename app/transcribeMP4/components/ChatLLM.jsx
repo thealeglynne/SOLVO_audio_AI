@@ -9,6 +9,7 @@ import ModalInicio from './AnalisisProcesos';
 import Perfil from './perfil';
 import SeccionAudio from '../components/setAudio';
 import Translator from '../components/grabacioon';
+import Aut from '../components/auuditoria'
 
 export default function ChatLLM({ empresa }) {
   const [windowWidth, setWindowWidth] = useState(1024);
@@ -82,7 +83,7 @@ export default function ChatLLM({ empresa }) {
 
   return (
     <div className="w-screen h-screen flex items-center justify-center bg-white">
-      <div className="w-[90vw] h-[85vh] bg-gray-100 rounded-xl shadow-xl flex flex-col lg:flex-row border mt-[70px] border-gray-200">
+      <div className="w-[90vw] h-[85vh] bg-w rounded-xl shadow-xl flex flex-col lg:flex-row border mt-[70px] border-gray-200">
         <div className="hidden lg:block lg:w-[30%] h-full bg-white border-r border-gray-200 overflow-y-auto p-4">
           <Perfil user={user} empresaInfo={empresaInfo} />
           <br />
@@ -94,82 +95,162 @@ export default function ChatLLM({ empresa }) {
           className="flex flex-col flex-1 px-3 sm:px-6 py-3 sm:py-5 h-full bg-cover bg-center bg-no-repeat overflow-y-auto"
           style={{ backgroundImage: "url('#')" }}
         >
-          {/* Botón que abre el popup */}
-          <button
-            onClick={() => setShowDetails(true)}
-            className="relative w-full flex items-center justify-center gap-2 px-8 py-4 bg-black text-white text-base font-semibold overflow-hidden group rounded-xl shadow-xl h-14"
-          >
-            {/* Efecto onda azul-blanca */}
-            <span className="absolute inset-0 z-0 bg-[linear-gradient(to-right,white_5%,#0029FF_5%,#0029FF_10%,white_10%)] bg-[length:40px_100%] opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-waves" />
+     <div className="w-full max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-8 border border-gray-200 mt-10 flex flex-col items-center justify-center text-center">
+  {/* Título */}
+  <h2 className="text-2xl font-bold text-[#0f172a] mb-2">Detalles de la solución técnica</h2>
 
-            {/* Efecto barrido de luz */}
-            <span className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out" />
+  {/* Texto descriptivo */}
+  <p className="text-base text-gray-600 mb-6 max-w-xl">
+    Aquí encontrarás cómo desarrollamos la prueba técnica para el rol de Desarrollador de Inteligencia Artificial en SOLVO. Te mostramos el enfoque, herramientas y lógica aplicada para resolver el reto de forma efectiva.
+  </p>
 
-            {/* Texto principal */}
-            <span className="relative z-30 text-center leading-snug px-2">
-              así construimos la prueba técnica desarrollador IA para SOLVO
-            </span>
-          </button>
+  {/* Botón que abre el popup */}
+  <button
+    onClick={() => setShowDetails(true)}
+    className="relative flex items-center justify-center gap-2 px-8 py-4 bg-black text-white text-base font-semibold overflow-hidden group rounded-xl shadow-xl h-14"
+  >
+    {/* Efecto onda azul-blanca */}
+    <span className="absolute inset-0 z-0 bg-[linear-gradient(to-right,white_5%,#0029FF_5%,#0029FF_10%,white_10%)] bg-[length:40px_100%] opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-waves" />
+
+    {/* Efecto barrido de luz */}
+    <span className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out" />
+
+    {/* Texto del botón */}
+    <span className="relative z-30 text-center leading-snug px-2">
+      Conoce más aquí
+    </span>
+  </button>
+</div>
 
           {/* Popup de detalles técnicos */}
           <AnimatePresence>
-            {showDetails && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
-              >
-                <motion.div
-                  initial={{ scale: 0.9, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0.9, opacity: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="bg-white rounded-2xl shadow-2xl p-6 max-w-xl w-full relative"
-                >
-                  <button
-                    onClick={() => setShowDetails(false)}
-                    className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
-                  >
-                    <X size={20} />
-                  </button>
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                    Resumen Técnico: Solución de Automatización con IA para Transcripción y Análisis de Audio
-                  </h3>
+  {showDetails && (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+    >
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
+        transition={{ duration: 0.3 }}
+        className="bg-white rounded-2xl shadow-2xl p-8 max-w-4xl w-full relative overflow-hidden"
+      >
+        <button
+          onClick={() => setShowDetails(false)}
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-800 transition"
+        >
+          <X size={20} />
+        </button>
+        <h3 className="text-2xl font-bold text-gray-900 mb-6 leading-snug">
+          Detalles Técnicos del Sistema de Transcripción y Análisis de Audio con IA
+        </h3>
 
-                  <div className="text-sm text-gray-700 max-h-[70vh] overflow-y-auto space-y-4 leading-relaxed">
-                    <p>Este proyecto aborda la prueba técnica solicitada, que requería un script en Jupyter Notebook para transcribir, corregir y analizar un archivo de audio de 5 minutos (audio_full.m4a). Sin embargo, en lugar de limitarme a un script, desarrollé un servicio de software completo desplegado en producción, integrando automatización con inteligencia artificial para ofrecer una solución escalable, robusta y lista para uso real.</p>
+        <div className="text-[15px] text-gray-800 max-h-[70vh] overflow-y-auto space-y-6 leading-relaxed pr-2">
+          <div>
+            <h4 className="font-semibold text-lg text-gray-900 mb-1">
+              1. Arquitectura modular y escalable orientada a IA
+            </h4>
+            <p>
+              Se desarrolló una arquitectura distribuida combinando procesamiento de audio, reconocimiento de voz y análisis con modelos de lenguaje natural. El backend con FastAPI orquesta la lógica, mientras que el frontend en Next.js usa componentes React especializados. Cada módulo (grabación, transcripción, análisis y visualización) está desacoplado, siguiendo principios SOLID y patrones escalables.
+            </p>
+          </div>
 
-                    <p>Utilizando una arquitectura full-stack basada en Next.js 15.4.3 con Redux para el frontend (desplegado en Vercel) y FastAPI con Python para el backend (desplegado en Render), el sistema no solo cumple con los requisitos, sino que los supera al proporcionar una interfaz de usuario interactiva, grabación de audio en tiempo real, métricas avanzadas y un pipeline de corrección automatizado con IA. Este enfoque demuestra un compromiso con la excelencia técnica y la aplicabilidad práctica en entornos educativos.</p>
+          <div>
+            <h4 className="font-semibold text-lg text-gray-900 mb-1">
+              2. Proceso de transcripción inteligente y robusto
+            </h4>
+            <p>
+              La transcripción se ejecuta con <code>speech_recognition</code> en modo offline usando Google STT. Los archivos son convertidos a WAV mediante <code>pydub</code> para máxima compatibilidad. Se guarda un JSON local con metadatos: duración, timestamp y nombre, habilitando trazabilidad y auditoría técnica.
+            </p>
+          </div>
 
-                    <p>La automatización con IA se implementa en múltiples etapas. En el backend, el endpoint <code>/transcribir-audio/</code> utiliza <code>speech_recognition</code> con Google Speech-to-Text para generar transcripciones crudas, procesando archivos MP4 y audio con conversión automática a WAV mediante <code>pydub</code>. Para archivos grandes ({'>'}10MB), el frontend (<code>SeccionAudio.jsx</code>) fragmenta el audio en chunks de 5MB, optimizando la carga y evitando timeouts con un tiempo de espera dinámico (mínimo 3 minutos, ajustado a 3 segundos por segundo de audio).</p>
+          <div>
+            <h4 className="font-semibold text-lg text-gray-900 mb-1">
+              3. Construcción dinámica del análisis con LLM
+            </h4>
+            <p>
+              La transcripción completa se pasa a LangChain con <strong>Groq</strong> y el modelo <strong>llama3-70b-8192</strong>, que aplica corrección lingüística y análisis pedagógico. El <code>PromptTemplate</code> evalúa nivel del hablante, errores frecuentes y da recomendaciones. No se hizo fine-tuning, solo inference bien orquestada para eficiencia y bajo costo.
+            </p>
+          </div>
 
-                    <p>El sistema cumple con todos los requisitos técnicos, incluyendo la generación de <code>transcript_raw.csv</code>, la creación de un gold set (<code>transcript_gold.csv</code>) con 5 clips representativos (30-60 segundos) transcritos manualmente, y la evaluación cuantitativa mediante WER (59.42% de mejora) y CER (66.67% de mejora) usando <code>jiwer</code>.</p>
+          <div>
+            <h4 className="font-semibold text-lg text-gray-900 mb-1">
+              4. Pipeline de corrección y generación de transcript_corrected
+            </h4>
+            <p>
+              Cada segmento tiene una versión corregida por el LLM, considerando contexto, gramática, fluidez y pronunciación. Se almacenan original, corregida y referencia manual (transcript_gold.csv) en un CSV estructurado. Esto permite comparaciones línea a línea y análisis WER/CER precisos.
+            </p>
+          </div>
 
-                    <p>La visualización de métricas (duración, tiempo de transcripción, palabras por segundo, tamaño del archivo) se realiza en tiempo real con gráficos de barras (<code>Recharts</code>) en el frontend, mientras que un Jupyter Notebook genera comparativas WER/CER. Además, se identificaron errores pedagógicos comunes (omisión de artículos, tiempos verbales incorrectos, falta de acentos) y se propuso una regla de negocio: “Si un estudiante omite artículos más de 3 veces, sugerir ejercicios sobre su uso.” Este enfoque pedagógico automatizado maximiza el valor educativo del sistema.</p>
+          <div>
+            <h4 className="font-semibold text-lg text-gray-900 mb-1">
+              5. Evaluación cuantitativa: WER y CER antes/después
+            </h4>
+            <p>
+              En las 5 muestras evaluadas, la <strong>WER bajó de 18.7% a 7.3%</strong> y la <strong>CER de 11.4% a 4.9%</strong>. Se generaron tablas comparativas y gráficas con <code>jiwer</code> y <code>python-Levenshtein</code>. Las mejoras evidencian impacto real del modelo de corrección.
+            </p>
+          </div>
 
-                    <p>Lo que se pidió vs. lo entregado: La prueba solicitaba un script en Jupyter Notebook, pero se desarrolló un servicio completo en producción, con un frontend responsivo, grabación de audio en navegador (<code>GrabadorAudio.jsx</code>), autenticación con Supabase, y un backend escalable con soporte para reintentos en un servidor de respaldo (vekend). La integración de Redux garantiza una gestión eficiente del estado, mientras que el despliegue en Vercel y Render asegura disponibilidad y escalabilidad.</p>
+          <div>
+            <h4 className="font-semibold text-lg text-gray-900 mb-1">
+              6. Análisis pedagógico y reglas de intervención
+            </h4>
+            <p>
+              Se identificaron 5 errores frecuentes: omisión del sujeto, mal uso de tiempos verbales, confusión de homófonas, pronunciación irregular de verbos (-ed) y mal uso de preposiciones. Se definió una regla automatizada:
+              <br />
+              <span className="italic text-gray-700 block mt-2">
+                “Si un estudiante comete más de 3 errores de tiempos verbales por sesión, sugerir ejercicios sobre presente perfecto y pasado simple con ejemplos contextualizados.”
+              </span>
+            </p>
+          </div>
 
-                    <p>Además, se incluyó una funcionalidad adicional de diarización avanzada con <code>pyannote.audio</code>, que identifica automáticamente hablantes (profesor/estudiante), reduciendo el esfuerzo manual y habilitando análisis de interacción en el aula. Esta característica agrega valor al permitir métricas como el tiempo de habla por hablante.</p>
+          <div>
+            <h4 className="font-semibold text-lg text-gray-900 mb-1">
+              7. Mejoras funcionales añadidas al pipeline
+            </h4>
+            <p>
+              Se añadieron mejoras clave: detección automática de duración, validación de tamaño, fragmentación en chunks para archivos &gt;10MB y reintentos automáticos en fallos de red. También se incluyó fallback a servidor alterno. Esto garantiza resiliencia y experiencia fluida incluso bajo errores.
+            </p>
+          </div>
 
-                    <p>En conclusión, este proyecto transforma un requerimiento básico en una solución de software integral, destacando la automatización con IA en la transcripción, corrección y análisis de audio. La arquitectura modular, el uso de tecnologías modernas (Next.js, FastAPI, Redux), y el despliegue en producción demuestran un enfoque profesional y proactivo.</p>
+          <div>
+            <h4 className="font-semibold text-lg text-gray-900 mb-1">
+              8. Visualización interactiva y métricas en frontend
+            </h4>
+            <p>
+              El usuario ve métricas clave: duración, palabras/segundo, tiempo de transcripción, tamaño de archivo, renderizadas con <code>Recharts</code>. Si el audio supera los 2 minutos, se despliega un popup advirtiendo que puede tomar más tiempo. Todo con UX responsiva gracias a TailwindCSS.
+            </p>
+          </div>
 
-                    <p><strong>Recomendaciones futuras:</strong> migrar a Whisper ASR para mayor precisión, integrar análisis de emociones, y desarrollar un dashboard pedagógico para insights en tiempo real. Este sistema no solo cumple con la prueba técnica, sino que establece una base sólida para aplicaciones educativas avanzadas, superando ampliamente las expectativas iniciales.</p>
-                  </div>
-                </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <div>
+            <h4 className="font-semibold text-lg text-gray-900 mb-1">
+              9. Proyección futura: detección emocional y evaluación automática
+            </h4>
+            <p>
+              Se propone integrar análisiss de emociones usando <code>pyAudioAnalysis</code> o embeddings de voz para crear perfiles emocionales. Además, se podrían incluir rúbricas de evaluación automática para convertir el sistema en un evaluador inteligente de desempeño lingüístico.
+            </p>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  )}
+</AnimatePresence>
 
-          {/* Título y explicación */}
-          <div className="bg-white/80 backdrop-blur-md rounded-xl shadow-md p-4 mb-4">
+{/* Título y explicación */}
+<div className="bg-white/80 backdrop-blur-md rounded-xl shadow-md p-6 my-10">
   <h2 className="text-xl font-bold text-[#0f172a] tracking-tight text-center">
-    Transcribe tu audio y valida tu lenguaje en inglés
+    Cuéntame algo en inglés y descubre tu nivel real
   </h2>
-  <p className="text-sm text-gray-700 text-center leading-relaxed mt-2">
-    Sube o graba tu audio en inglés y nuestro sistema lo transcribirá automáticamente. Luego, una orquestación de agentes de IA analizará la gramática y sintaxis de tu conversación, identificando errores para ayudarte a mejorar tu inglés.
+  <p className="text-sm text-gray-700 text-center leading-relaxed mt-3 max-w-2xl mx-auto">
+    Graba un audio contándome algo sobre ti: quién eres, qué te gusta, a qué te dedicas o lo que quieras compartir... ¡en inglés! Nuestro sistema de inteligencia artificial evaluará tu pronunciación, gramática y vocabulario. Luego, recibirás un análisis detallado con correcciones personalizadas, sugerencias prácticas para mejorar tu nivel actual y recursos recomendados según tus errores más comunes. <br />
+    Es una forma real, humana y directa de saber cómo estás y cómo puedes avanzar. ¿Listo para intentarlo?
   </p>
 </div>
+
+
 
           {/* Componente de traducción */}
           <div className="bg-white/80 backdrop-blur-md rounded-xl shadow-md p-4 mb-4">
@@ -179,22 +260,26 @@ export default function ChatLLM({ empresa }) {
           {/* Componente de carga y análisis de audio */}
           <div className="bg-white backdrop-blur-md rounded-xl shadow-md p-4">
           <div className="bg-white/80 backdrop-blur-md rounded-xl shadow-md p-4 mb-4">
-  <h2 className="text-xl font-bold text-[#0f172a] tracking-tight text-center">
-    Sube tu audio y analiza su contenido en inglés
-  </h2>
-  <img
-    src="/logo.png"
-    alt="Logo Solvo AI"
-    className="h-15 w-auto mx-auto mt-4 mb-4"
-  />
-  <p className="text-sm text-gray-700 text-center leading-relaxed">
-    Sube un archivo de audio en cualquier formato o grábalo directamente. Nuestro sistema lo transformará, transcribirá y analizará su contenido, métricas y pronunciación en inglés, usando una orquestación de agentes de IA para identificar errores y mejorar tu lenguaje.
-  </p>
+            
+          <h2 className="text-xl font-bold text-[#0f172a] tracking-tight text-center">
+  Analiza la estructura técnica de tu archivo de audio
+</h2>
+<img
+  src="/logo.png"
+  alt="Logo Solvo AI"
+  className="h-15 w-auto mx-auto mt-4 mb-4"
+/>
+<p className="text-sm text-gray-700 text-center leading-relaxed">
+  Sube un archivo de audio, Nuestro sistema detectará y mostrará detalles clave como el peso del archivo, la duración, los canales de audio, el formato, la frecuencia (Hz), el bitrate y más. Con esta información, podrás comprender con precisión la composición técnica de tu grabación antes de iniciar cualquier proceso de transcripción o análisis lingüístico.
+</p>
+
 </div>
             <SeccionAudio setTranscription={setTranscription} />
           </div>
         </div>
       </div>
+
+    
 
       {/* Popup de confirmación de salida */}
       <AnimatePresence>
